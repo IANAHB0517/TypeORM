@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -94,7 +95,26 @@ export class UserModel {
   @Generated('uuid')
   additionalId: string;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.user)
+  @OneToOne(() => ProfileModel, (profile) => profile.user, {
+    // find() 실행 할 때마다 항상 같이 가져올 relation
+    // 기본값은 false
+    eager: true,
+    // 저장할 때 ralation을 한번에 저장 가능
+    cascade: true,
+    // null 가능여부
+    // JoinColumn 어노테이션이 주에게 명시되어 있어야 하는 상황을 겪음
+    // 종에게 어노테이션을 적용한 경우 종을 따로 생성하지 않아도 nullable : false 상태에서 null값으로 생성이 되는데
+    // 이는 주가 종을 소유하는 것이 아닌 종이 주를 따라오는 느낌이라 그런 것이 아닐까 추측됨
+    nullable: true,
+    // 관계가 삭제됐을때
+    // no action -> 아무것도 안함
+    // CASCADE -> 참조하는 Row도 같이 삭제
+    // SET NULL -> 참조하는 Row에서 참조 id를 null로 변경
+    // DEFAULT -> 기본 세팅으로 설정 (테이블의 기본 세팅)
+    // RESTRICT -> 참조하고 있는 Row가 있는 경우 참조되는 Row 삭제 불가
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn()
   profile: ProfileModel;
 
   @OneToMany(() => PostModel, (post) => post.author)

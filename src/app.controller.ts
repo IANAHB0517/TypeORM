@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from './entity/user.entity';
@@ -51,23 +51,27 @@ export class AppController {
   async createUserAndProfile() {
     const user = await this.userRepository.save({
       email: 'asd@naver.com',
+      profile: {
+        profileImg: 'asdf.img',
+      },
     });
 
-    const profile = await this.profileRepository.save({
-      profileImg: 'asdf.img',
-      user,
-    });
+    // const profile = await this.profileRepository.save({
+    //   profileImg: 'asdf.img',
+    //   user,
+    // });
 
     return user;
+  }
+
+  @Delete('user/profile/:id')
+  async deleteProfile(@Param('id') id: string) {
+    await this.profileRepository.delete(+id);
   }
 
   @Get('usersAndRelation')
   async userAndProfile() {
     return this.userRepository.find({
-      relations: {
-        profile: true,
-        posts: true,
-      },
       order: {
         id: 'asc',
       },
@@ -113,6 +117,7 @@ export class AppController {
       posts: [post1],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const post3 = await this.postRepository.save({
       title: 'capuccino',
       tags: [tag1, tag2],
