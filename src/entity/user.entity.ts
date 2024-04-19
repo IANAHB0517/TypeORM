@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
 import { ProfileModel } from './profile.entity';
+import { PostModel } from './post.entity';
 
 // 컬럼에 들어오는 값을 특정한 값으로 제한 해서 데이터의 Integrity를 유지하고자 할 때 사용한다.
 export enum Role {
@@ -94,4 +96,7 @@ export class UserModel {
 
   @OneToOne(() => ProfileModel, (profile) => profile.user)
   profile: ProfileModel;
+
+  @OneToMany(() => PostModel, (post) => post.author)
+  posts: PostModel[];
 }
