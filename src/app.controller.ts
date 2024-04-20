@@ -1,6 +1,17 @@
 import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  Equal,
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { UserModel } from './entity/user.entity';
 import { ProfileModel } from './entity/profile.entity';
 import { PostModel } from './entity/post.entity';
@@ -34,8 +45,12 @@ export class AppController {
   }
 
   @Post('users')
-  postUser() {
-    return this.userRepository.save({});
+  async postUser() {
+    for (let i = 0; i < 100; i++) {
+      await this.userRepository.save({
+        email: `user-${i}@google.com`,
+      });
+    }
   }
 
   @Get('users')
@@ -54,33 +69,58 @@ export class AppController {
       // 전부다 and 연산이 된다
       // or 연산을 하고자 하는 경우에는 or 연산이 필요한 절을 list로 제공해야하 한다
       // 리스트 안에서 and 연산되어야 하는 항목끼리 객체로 묶어준다.
-      where: [
+      where:
+        // [
         // {
         //   // id: 3,
         //   version: 1,
         // },
         // { id: 3 },
         // { profile: { id: 3 } },
-      ],
+        // ],
+        {
+          // 파라미터의 값과 같지 않은 경우 가져오기
+          // id: Not(1)
+          // 파라미터의 값보다 작은 경우 가져오기
+          // id: LessThan(30),
+          // 파라미터의 값보다 작거나 같은 경우 가져오기
+          // id: LessThanOrEqual(30),
+          // 값보다 더 큰 경우
+          // id: MoreThan(30),
+          // 값보다 더 크거나 같은 경우
+          // id: MoreThanOrEqual(30),
+          // 값과 같은 경우
+          // id: Equal(30),
+          // 유사값 (oracle 과 동일하게 쓰임)
+          // email: Like('%google%'),
+          // 대문자, 소문자 구분 안하는 유사값
+          // email: ILike('%GOOGLE%)
+          // 사이값
+          // id: Between(10, 15)
+          // 해당되는 여러개의 값
+          // id: In([1, 3, 5, 8, 55]),
+          // 해당 컬럼이 null인 경우
+          // id: IsNull(),
+        },
       // 관계를 가져오븐 법
       // join 이라고 생각하자
       // relations 속성을 사용하면 select 절이나 where 절 등 다른 곳에서 해당 속성의 컬럼을 사용 할 수 있다.
-      relations: {
-        profile: true,
-      },
+      // relations: {
+      //   profile: true,
+      // },
       // 정렬 순서
       // asc , desc
       order: {
         id: 'asc',
       },
       // skip 처음 몇개를 제외할질,
-      skip: 0,
+      // skip: 0,
       // 총 몇개를 가지고 올지 정하는 프로퍼티
       // 페이지네이션에 유용할 듯하다
       // 기본 값은 전체 결과 값이다.
 
       // skip 과 take의 값을 동적으로 사용하여 페이지네이션에 활용하기 좋을 것 같다
-      take: 4,
+      // take: 4,
     });
   }
 
