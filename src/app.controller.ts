@@ -2,6 +2,7 @@ import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Equal,
+  ILike,
   In,
   IsNull,
   LessThan,
@@ -16,6 +17,7 @@ import { UserModel } from './entity/user.entity';
 import { ProfileModel } from './entity/profile.entity';
 import { PostModel } from './entity/post.entity';
 import { TagModel } from './entity/tag.entity';
+import { sample, max } from 'rxjs';
 
 @Controller()
 export class AppController {
@@ -222,5 +224,86 @@ export class AppController {
         id: 'asc',
       },
     });
+  }
+
+  @Post('sample')
+  async sample() {
+    // 모델에 해당되는 객체 생성 - 저장은 안함
+    // const user1 = this.userRepository.create({
+    //   email: 'test@google.com',
+    // });
+
+    // const user2 = await this.userRepository.save({
+    //   email: 'test@mail.com',
+    // });
+
+    // preload
+    // 입력된 값을 기반으로 데이터베이스에 있는 데이터를 불러오고
+    // 추가 입력된 값으로 데이터베이스에서 가져온 값들을 대체함.
+    // 저장하지는 않음
+    // find와 create 함수가 섞인 버전 데이터를 찾을 경우 primary key 혹은 entity id 를 사용해서 만 찾을 수 있다.
+    // 고로 id 가 email의 값으로 찾아서 id를 변경할 수 없다.
+    // https://typeorm.delightful.studio/classes/_repository_repository_.repository.html#preload
+    // const user3 = await this.userRepository.preload({
+    //   id: 101,
+    //   email: 'testPreload@google.com',
+
+    // 삭제하기
+    // await this.userRepository.delete(101);
+
+    // 특정 칼럼의 값을 증가 시키는 법
+    // await this.userRepository.increment(
+    //   {
+    //     id: 3,
+    //   },
+    //   'count',
+    //   100,
+    // );
+
+    // 특정 칼럼의 값을 감소 시키는 법
+    // await this.userRepository.decrement({ id: 1 }, 'count', 2);
+
+    // 갯수 카운팅 (count 함수)
+
+    // const count = await this.userRepository.count({
+    //   where: {
+    //     email: ILike('%0%'),
+    //   },
+    // });
+
+    // sum
+
+    // const sum = await this.userRepository.sum('count', {
+    //   id: LessThan(4),
+    // });
+
+    // 평균
+    // const average = await this.userRepository.average('count', {
+    //   id: LessThan(4),
+    // });
+
+    // 최소값
+    // const min = await this.userRepository.minimum('count', {
+    //   id: LessThan(4),
+    // });
+
+    // 최대값
+    // const max = await this.userRepository.maximum('count', {
+    //   id: LessThan(4),
+    // });
+
+    // findOne의 경우 여러개의 값이 해당한다면 가장 첫번째의 값을 가지고 온다
+    // const userOne = await this.userRepository.findOne({
+    //   where: {
+    //     id: MoreThan(3),
+    //   },
+    // });
+
+    //pagenation
+    // const userAndCount = await this.userRepository.findAndCount({
+    //   take: 3,
+    // });
+
+    return true;
   }
 }
